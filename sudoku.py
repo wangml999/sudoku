@@ -294,7 +294,6 @@ rows:
   ...
  - cell (9, 9) is 9
 """
-solutions = []
 def exact_cover_solver(A):
     length = 3
     size = length**2
@@ -318,10 +317,9 @@ def exact_cover_solver(A):
 
     row_names = np.vstack(row_names)
 
-    solutions.clear()
-    algorithm_x(row_names, matrix, [])
-    for s in solutions:
-        k = solution_to_array(s)
+    gen = algorithm_x(row_names, matrix, [])
+    for sol in gen:
+        k = solution_to_array(sol)
         print(k)
 
     return
@@ -335,10 +333,10 @@ def test_algorithm_x():
     matrix[4,] = [0,1,1,0,0,1,1]
     matrix[5,] = [0,1,0,0,0,0,1]
 
-    solutions.clear()
     row_names = np.vstack(['A', 'B', 'C', 'D', 'E', 'F'])
-    algorithm_x(row_names, matrix, [])
-    print(solutions)
+    gen = algorithm_x(row_names, matrix, [])
+    for sol in gen:
+        print(sol)
 
 def solution_to_array(solution):
     k = np.zeros([9, 9], dtype=int)
@@ -350,7 +348,7 @@ def solution_to_array(solution):
 
 def algorithm_x(row_names, matrix, solution):
     if matrix.size == 0:
-        solutions.append(solution.copy())
+        yield solution
         return
 
     colsum = matrix.sum(axis=0)
@@ -373,7 +371,7 @@ def algorithm_x(row_names, matrix, solution):
         reducted = np.delete(reducted, col_indexes, axis=1)
         reducted_rows = np.delete(row_names, rows_to_delete, axis=0)
 
-        algorithm_x(reducted_rows, reducted, solution)
+        yield from algorithm_x(reducted_rows, reducted, solution)
         solution.pop()
 
 def sudoku_solver(problem, diagonal=False):
@@ -388,6 +386,6 @@ def sudoku_solver(problem, diagonal=False):
 
 if __name__ == "__main__":
     #test_algorithm_x()
-    sudoku_solver(problm5)
+    sudoku_solver(problm6)
 
 
