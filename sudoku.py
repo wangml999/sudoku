@@ -61,6 +61,16 @@ problm6 = '800 000 000\n'\
           '008 500 010\n'\
           '090 000 400'
 
+problm7 = '500 692 378\n'\
+          '800 000 500\n'\
+          '060 805 400\n'\
+          '750 000 832\n'\
+          '090 000 005\n'\
+          '000 500 100\n'\
+          '006 051 000\n'\
+          '030 060 050\n'\
+          '005 007 000'
+
 def get_duplication(a):
     a_, counts = np.unique(a, return_counts=True)
     #return np.sum(np.where(counts>1, counts, 0))
@@ -121,13 +131,16 @@ def backtracking_solver(A, diagonal=False):
                 k = A[int(r / 3) * 3:(int(r / 3) + 1) * 3, int(c / 3) * 3:(int(c / 3) + 1) * 3].flatten()
                 v = np.setdiff1d(v, k)
                 for i in v:
-                    a = np.copy(A)
-                    a[r, c] = i
-                    print(a)
-                    if not is_legal(a, diagonal):
+                    #a = np.copy(A)
+                    temp = A[r, c]
+                    A[r, c] = i
+                    print(A)
+                    if not is_legal(A, diagonal):
+                        A[r, c] = temp
                         continue
-                    if backtracking_solver(a, diagonal):
+                    if backtracking_solver(A, diagonal):
                         return True
+                    A[r, c] = temp
                 return False
     return False
 
@@ -377,15 +390,14 @@ def algorithm_x(row_names, matrix, solution):
 def sudoku_solver(problem, diagonal=False):
     prob = np.vstack([[int(j) for j in list(r)] for r in problem.replace(' ', '').split('\n')])
 
-    #print(prob)
-    #simulated_annealing_solver(prob)
-    #backtracking_solver(prob)
     print(prob)
     print(end='\n')
+    #simulated_annealing_solver(prob)
+    #backtracking_solver(prob)
     exact_cover_solver(prob)
 
 if __name__ == "__main__":
     #test_algorithm_x()
-    sudoku_solver(problm6)
+    sudoku_solver(problm7)
 
 
